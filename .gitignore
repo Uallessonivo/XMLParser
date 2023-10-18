@@ -1,5 +1,6 @@
 # Files
 *.xml
 *.csv
+*.exe
 .env
 .vscode
