@@ -25,6 +25,7 @@ func seedMap(rows [][]string) map[string]string {
 func enterToClose() {
 	fmt.Println("Aperte 'enter' para sair")
 	fmt.Scanln()
+	os.Exit(1)
 }
 
 func openFile(fileName string) (file *os.File) {
@@ -68,6 +69,7 @@ func main() {
 	}
 
 	nodes := xmlquery.Find(doc, "//cProd")
+	nNF := xmlquery.FindOne(doc, "//nNF")
 
 	for _, node := range nodes {
 		code := node.InnerText()
@@ -77,8 +79,20 @@ func main() {
 		}
 	}
 
-	// TODO: Create the xml file
+	updatedFileName := nNF.InnerText() + ".xml"
 
-	fmt.Println("Arquivo xml atualizado com sucesso")
-	enterToClose()
+	xmlFile, err := os.Create(updatedFileName)
+	if err != nil {
+		fmt.Println("Erro ao criar arquivo xml")
+		enterToClose()
+	}
+	defer xmlFile.Close()
+
+	_, err = xmlFile.WriteString(doc.OutputXML(true))
+	if err != nil {
+		fmt.Println("Erro ao escrever arquivo xml")
+		enterToClose()
+	}
+
+	fmt.Println(doc.OutputXML(true))
 }
